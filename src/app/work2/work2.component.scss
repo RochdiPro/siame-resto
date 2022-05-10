@@ -1,0 +1,21 @@
+ 
+    @media print
+    {
+        #non-printable { display: none; }
+        #printable { display: block; }
+        body {
+            content:url('./../../assets/images/A60 B22.svg');
+           }
+           * {
+            -webkit-print-color-adjust: exact;
+        }
+    }
+
+  
+    .bc_image{
+       // background-image: url('./../../assets/images/A60.svg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        //height: 100%;
+
+    }

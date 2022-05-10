@@ -1,11 +1,12 @@
 {
-    "/ERP/*":{
-        "target":"http://41.228.33.200:3333",
+    "/back/*":{
+        "target":"http://192.168.1.63:3333",
         "secure":false,
-        "logLevel":"debug",
+        "logLevel":"debug",         
         "pathRewrite":
         {
-            "^/ERP":""
+            "^/back":""
         }
-    } 
+    }
+    
 }
