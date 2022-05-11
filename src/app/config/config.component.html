@@ -5,9 +5,69 @@
   Configuration  </h1>
  
 <div class="row col-md-12 "  > 
- 
-  <input type="file" (change)="readagent($event )">
-  <img src="./../../assets/images/pdf.png" style="margin-left: 60%;"  (click)="generatePDF()">
+  <div class="file-upload">
+    <input type="file" class="file-input"  (change)="readagent($event)"
+        #fileEmployesUpload>
+    <div class="file-upload">
+        {{fileNameEmploye || "Pas de fichier sélectionné."}}
+        <button mat-mini-fab color="primary" class="upload-btn" (click)="fileEmployesUpload.click()"
+            matTooltip="Importer " matTooltipPosition="right">
+            <mat-icon>attach_file</mat-icon>
+        </button>
+    </div>
+</div>
+<section [formGroup]="form">
+
+    <mat-form-field style=" width: 25%;  ">
+      <mat-label> {{annee}} </mat-label>
+      <mat-select (selectionChange)="choix_anne($event)" formControlName="anne" placeholder="annee">
+        <mat-option value="2022"> 2022</mat-option>
+        <mat-option value="2023"> 2023</mat-option>
+        <mat-option value="2024"> 2024</mat-option>
+        <mat-option value="2025"> 2025</mat-option>
+        <mat-option value="2026"> 2026</mat-option>
+        <mat-option value="2027"> 2027</mat-option>
+        <mat-option value="2028"> 2028</mat-option>
+        <mat-option value="2029"> 2029</mat-option>
+        <mat-option value="2030"> 2030</mat-option>
+        <mat-option value="2031"> 2031</mat-option>
+        <mat-option value="2032"> 2032</mat-option>
+        <mat-option value="2033"> 2033</mat-option>
+        <mat-option value="2034"> 2034</mat-option>
+        <mat-option value="2035"> 2035</mat-option>
+        <mat-option value="2036"> 2036</mat-option>
+        <mat-option value="2037"> 2037</mat-option>
+        <mat-option value="2038"> 2038</mat-option>
+        <mat-option value="2033"> 2039</mat-option>
+        <mat-option value="2040"> 20140</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+    <mat-form-field style=" width: 25%;  margin-left: 3%;">
+      <mat-label> {{mois}} </mat-label>
+      <mat-select (selectionChange)="choix_mois($event)" formControlName="mois" placeholder="mois">
+        <mat-option value="1"> Janvier</mat-option>
+        <mat-option value="2"> Février</mat-option>
+        <mat-option value="3"> Mars</mat-option>
+        <mat-option value="4"> Avril</mat-option>
+        <mat-option value="5"> Mai</mat-option>
+        <mat-option value="6"> Juin</mat-option>
+        <mat-option value="7"> Juillet</mat-option>
+        <mat-option value="8"> Août</mat-option>
+        <mat-option value="9"> Septembre</mat-option>
+        <mat-option value="10"> Octobre</mat-option>
+        <mat-option value="11"> Novembre</mat-option>
+        <mat-option value="12"> Décembre</mat-option>
+   
+      </mat-select>
+    </mat-form-field>
+     
+    <img src="./../../assets/images/pdf.png" style="margin-left: 10%;"  (click)="generatePDF()">
+
+
+
+  </section>
 
       <table class="table table-striped " style="margin-left: 2%; margin-top: 4%">
         <thead>

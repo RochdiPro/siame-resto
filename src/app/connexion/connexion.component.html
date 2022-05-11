@@ -1,7 +1,7 @@
 
 <div id="non-printable" >
  <img src="./../../assets/images/img.png" height="100%" style="margin-top: 6%;">
- <img src="./../../assets/images/an.gif" width="30%" style="margin-top: 10%;"  >
+ <img src="./../../assets/images/an.gif" width="30%" style="margin-top: 10%;"  (click)="changer()" >
  <form [formGroup]="form">
 	<div class="input-group form-group">		 
 		<input formControlName="code" type="text" class="form-control"  style="margin-top:-5%"  #code  (keypress)="g_code($event)">

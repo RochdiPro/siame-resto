@@ -25,20 +25,60 @@ export class ConnexionComponent implements AfterViewInit {
 
   src_img: any = "./../../assets/images/a.svg"
   liste_employe: any;
-  date: any;mois:any
+  date: any;mois:any;annee:any;
+  annee_ticket: any;mois_ticket:any;jour_ticket:any;
+  id_ticket:any ;
   constructor(private fb: FormBuilder, private router: Router, private datePipe: DatePipe) {
     this.form = this.fb.group({
       code: ['']
     });
-    this.liste_employe = JSON.parse(localStorage.getItem('liste_employe') + "");
+
+    
+     this.liste_employe = JSON.parse(localStorage.getItem('liste_employe') + "");
+    this.annee_ticket = JSON.parse(localStorage.getItem('annee_ticket') + "");
+    this.mois_ticket = JSON.parse(localStorage.getItem('mois_ticket') + "");
+    this.jour_ticket = JSON.parse(localStorage.getItem('jour_ticket') + "");
     this.date =  new Date().getDay()
     this.mois=new Date().getMonth() + 1
+    this.annee = new Date().getFullYear();
+   
+     if(this.annee_ticket == undefined || this.mois_ticket == undefined || this.jour_ticket == undefined )
+    {
+       localStorage.setItem('jour_ticket', JSON.stringify(  this.date));
+      localStorage.setItem('mois_ticket', JSON.stringify(this.mois));
+      localStorage.setItem('annee_ticket', JSON.stringify(this.annee));
+      this.id_ticket = 1;
+    } 
+    else if (this.annee_ticket != this.annee || this.jour_ticket != this.date ||  this.mois != this.mois_ticket ) 
+    {
+      this.id_ticket = 1 ; 
+      localStorage.setItem('id_ticket', JSON.stringify(this.id_ticket));
+    }
+    else  {
+     
+      this.id_ticket = JSON.parse(localStorage.getItem('id_ticket') + "");
+    } 
   }
   ngAfterViewInit(): void {
     this.code_emp.nativeElement.focus();
+      
+    
   }
 
   ngOnInit(): void {
+      
+    
+    
+    
+   
+  }
+  changer(){
+    this.form.get('code')?.value
+    for (let i = 0; i < this.liste_employe.length; i++) {
+    for (let j = 0; j < this.liste_employe[i].date.length; j++) {
+      this.liste_employe[i].date[j].jour = 11
+    }
+    }
   }
 
   popupWin: any; inconnu: any = false; emp: any; repeter: any = false ; obj:any;
@@ -59,7 +99,7 @@ export class ConnexionComponent implements AfterViewInit {
           if (ch == this.liste_employe[i].code) {
             this.emp = this.liste_employe[i]; this.inconnu = true
             for (let j = 0; j < this.liste_employe[i].date.length; j++) {
-              if (this.liste_employe[i].date[j].jour==this.date && this.liste_employe[i].date[j].mois == this.mois) { 
+              if (this.liste_employe[i].date[j].jour==this.date && this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee) { 
                 this.repeter = true
               }
             } 
@@ -67,6 +107,7 @@ export class ConnexionComponent implements AfterViewInit {
               this.obj={};
               this.obj.mois = this.mois 
               this.obj.jour = this.date  
+              this.obj.annee = this.annee  
               this.liste_employe[i].date.push(this.obj)}
            }
         } 
@@ -75,7 +116,7 @@ export class ConnexionComponent implements AfterViewInit {
           let printContents =
             " <img style='width: 60%; margin-left: 20%; '  src='./../../assets/images/a.svg'>" +
             "<br> " +
-            "<h1 style='text-align: center; '>  Ticket N° : 124 </h1> <br>" +
+            "<h1 style='text-align: center; '>  Ticket N° : "+this.id_ticket+" </h1> <br>" +
             "<h4 > Date : " + this.datePipe.transform(new Date(), 'dd/MM/yyyy HH:mm:ss') + "</h4> "+
             "<h4 >  Nom : " + this.emp.nom + " </h4> " +
             "<br> " +
@@ -103,6 +144,15 @@ export class ConnexionComponent implements AfterViewInit {
           );
           this.popupWin.document.close();
           localStorage.setItem('liste_employe', JSON.stringify(this.liste_employe));
+          this.id_ticket=Number(this.id_ticket)+1
+          localStorage.setItem('id_ticket', JSON.stringify(this.id_ticket));
+          if (this.annee_ticket != this.annee || this.jour_ticket != this.date ||  this.mois != this.mois_ticket ) 
+          {
+            localStorage.setItem('jour_ticket', JSON.stringify(  this.date));
+            localStorage.setItem('mois_ticket', JSON.stringify(this.mois));
+            localStorage.setItem('annee_ticket', JSON.stringify(this.annee));
+          }
+ 
 
         }
         else if (this.repeter==true) {

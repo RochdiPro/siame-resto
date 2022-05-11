@@ -61,6 +61,7 @@
     "font-awesome": "^4.7.0",
     "jetifier": "^2.0.0",
     "mat-input": "0.0.1",
+    "material-icons": "^1.10.11",
     "ng2-charts": "^2.2.3",
     "ngx-barcode": "^0.3.0",
     "ngx-material-file-input": "^0.3.1",

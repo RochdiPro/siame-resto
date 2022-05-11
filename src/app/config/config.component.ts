@@ -4,6 +4,7 @@ import { Papa } from 'ngx-papaparse';
 import { HttpClient } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { DocumentViewerOptions } from '@awesome-cordova-plugins/document-viewer/ngx';
+import { FormControl, FormGroup } from '@angular/forms';
 const pdfMake = require("pdfmake/build/pdfmake");
 const pdfFonts = require("pdfmake/build/vfs_fonts");
 
@@ -18,6 +19,12 @@ export class ConfigComponent implements OnInit {
 
   liste_employe: any = [];
   mois: any;
+  annee: any;
+  fileNameEmploye: any;
+  form: any = new FormGroup({
+    anne: new FormControl(""),
+    mois: new FormControl(""),
+  });
 
   constructor(private papa: Papa, private http: HttpClient, private datePipe: DatePipe) {
 
@@ -25,12 +32,19 @@ export class ConfigComponent implements OnInit {
     this.chargerTemplate();
     this.templatePdfBase64();
     this.mois = new Date().getMonth() + 1
+    this.annee = new Date().getFullYear();
 
 
   }
 
 
+  choix_anne(ev: any) {
+    this.annee = ev.value;
+  }
 
+  choix_mois(ev: any) {
+    this.mois = ev.value;
+  }
 
   ngOnInit(): void {
   }
@@ -58,15 +72,14 @@ export class ConfigComponent implements OnInit {
         }
       }
       localStorage.setItem('liste_employe', JSON.stringify(this.liste_employe));
-
+      localStorage.setItem('jour_ticket', JSON.stringify(  "3333333"));
+      localStorage.setItem('mois_ticket', JSON.stringify("333333"));
+      localStorage.setItem('annee_ticket', JSON.stringify("33333333"));
     }
     fileReader.readAsText(file);
   }
 
-
-
   modele: any
-
   modeleSrc: any;
   e: any = {}
   pdfObj: any;
@@ -99,24 +112,20 @@ export class ConfigComponent implements OnInit {
 
   // generation du facture 
   async generatePDF() {
-    let moispdf=""
-    if(this.mois ==1){ moispdf='Janvier' }
-    if(this.mois ==2){ moispdf='Février' }
-    if(this.mois ==3){ moispdf='Mars' }
-    if(this.mois ==4){ moispdf='Avril' }
-    if(this.mois ==5){ moispdf='Mai' }
-    if(this.mois ==6){ moispdf='Juin' }
-    if(this.mois ==7){ moispdf='Juillet' }
-    if(this.mois ==8){ moispdf='Août' }
-    if(this.mois ==9){ moispdf='Septembre' }
-    if(this.mois ==10){ moispdf='Octobre' }
-    if(this.mois ==11){ moispdf='Novembre' }
-    if(this.mois ==12){ moispdf='Décembre' }
-  
- 
-
+    let moispdf = ""
+    if (this.mois == 1) { moispdf = 'Janvier' }
+    if (this.mois == 2) { moispdf = 'Février' }
+    if (this.mois == 3) { moispdf = 'Mars' }
+    if (this.mois == 4) { moispdf = 'Avril' }
+    if (this.mois == 5) { moispdf = 'Mai' }
+    if (this.mois == 6) { moispdf = 'Juin' }
+    if (this.mois == 7) { moispdf = 'Juillet' }
+    if (this.mois == 8) { moispdf = 'Août' }
+    if (this.mois == 9) { moispdf = 'Septembre' }
+    if (this.mois == 10) { moispdf = 'Octobre' }
+    if (this.mois == 11) { moispdf = 'Novembre' }
+    if (this.mois == 12) { moispdf = 'Décembre' }
     var body: any = [];
-
     var obj = new Array();
     this.e = { text: "Code", alignment: 'center' }
     obj.push(this.e)
@@ -236,197 +245,126 @@ export class ConfigComponent implements OnInit {
           obj.push(this.e)
           obj.push(this.e)
           obj.push(this.e)
+          obj.push(this.e) 
+          obj.push(this.e)
+          this.e = { text: 0  } 
           obj.push(this.e)
 
-
-          obj.push(this.e)
-          this.e = { text: "" + nb, alignment: 'center' }
-
-          obj.push(this.e)
-
+          body.push(obj)
 
         } else {
-          for (let j = 0; j < this.liste_employe[i].date.length; j++) {
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "1") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-
-            }
-            else {
-              this.e = { text: "", alignment: 'center' }; obj.push(this.e);
-            }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "2") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "3") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "4") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) } 
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "5") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "6") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "7") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "8") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "9") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "10") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-
-
-
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "11") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "12") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "13") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "14") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "15") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "16") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "17") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "18") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "19") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "20") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-
-
-
-
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "21") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "22") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "23") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "24") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "25") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "26") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "27") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "28") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "29") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "30") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
-
-
-
-
-            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "31") {
-              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
-            }
-            else { this.e = { text: "", alignment: 'center' }; }
-
-            this.e = { text: "" + nb, alignment: 'center' }; obj.push(this.e)
-            body.push(obj)
+          for (let k = 0; k < 31; k++) {
+            this.e = ""; obj.push(this.e);
           }
-        }
 
-        body.push(obj)
+          nb = 0;
+          for (let j = 0; j < this.liste_employe[i].date.length; j++) {
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "1") {
+              nb = Number(nb) + 1; obj[2] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "2") {
+              nb = Number(nb) + 1; obj[3] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "3") {
+              nb = Number(nb) + 1; obj[4] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "4") {
+              nb = Number(nb) + 1; obj[5] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "5") {
+              nb = Number(nb) + 1; obj[6] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "6") {
+              nb = Number(nb) + 1; obj[7] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "7") {
+              nb = Number(nb) + 1; obj[8] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "8") {
+              nb = Number(nb) + 1; obj[9] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "9") {
+              nb = Number(nb) + 1; obj[10] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "10") {
+              nb = Number(nb) + 1; obj[11] = "*"
+            }
+
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "11") {
+              nb = Number(nb) + 1; obj[12] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "12") {
+              nb = Number(nb) + 1; obj[13] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "13") {
+              nb = Number(nb) + 1; obj[14] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "14") {
+              nb = Number(nb) + 1; obj[15] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "15") {
+              nb = Number(nb) + 1; obj[16] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "16") {
+              nb = Number(nb) + 1; obj[17] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "17") {
+              nb = Number(nb) + 1; obj[18] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "18") {
+              nb = Number(nb) + 1; obj[19] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "19") {
+              nb = Number(nb) + 1; obj[20] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "20") {
+              nb = Number(nb) + 1; obj[21] = "*"
+            }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "21") {
+              nb = Number(nb) + 1; obj[22] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "22") {
+              nb = Number(nb) + 1; obj[23] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "23") {
+              nb = Number(nb) + 1; obj[24] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "24") {
+              nb = Number(nb) + 1; obj[25] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "25") {
+              nb = Number(nb) + 1; obj[26] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "26") {
+              nb = Number(nb) + 1; obj[27] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "27") {
+              nb = Number(nb) + 1; obj[28] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "28") {
+              nb = Number(nb) + 1; obj[29] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "29") {
+              nb = Number(nb) + 1; obj[30] = "*"
+            }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "30") {
+              nb = Number(nb) + 1; obj[31] = "*"
+            }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "30") {
+              nb = Number(nb) + 1; obj[31] = "*"
+            }
+
+          }
+          obj[32] = "" + nb
+          body.push(obj)
+        }
       }
     }
 
-    let date_edit = this.datePipe.transform(new Date(), 'dd/MM/yyyy  | HH:MM');
+    let date_edit = this.datePipe.transform(new Date(), 'dd/MM/yyyy  HH:MM');
     var obj = new Array();
     var def = {
       background: [
@@ -444,20 +382,27 @@ export class ConfigComponent implements OnInit {
         title: 'Siame',
       },
 
-      header: [ 
+      header: [
         {
-          text: ' Mois : '+moispdf,
+          text: ' Mois : ' + moispdf,
           fontSize: 12,
           color: 'black',
 
           relativePosition: { x: 200, y: 40 }
         },
         {
+          text: ' Année : ' + this.annee,
+          fontSize: 12,
+          color: 'black',
+
+          relativePosition: { x: 200, y: 70 }
+        },
+        {
           text: '  éditer le ' + date_edit,
           fontSize: 12,
           color: 'black',
 
-          relativePosition: { x: 200, y: 80 }
+          relativePosition: { x: 200, y: 100 }
         },
         {
           text: '  Rapport Cantine',
@@ -470,7 +415,7 @@ export class ConfigComponent implements OnInit {
       content: [
         {
           table: {
-             widths: [30, 100, 11, 11, 11, 11, 11, 11, 11, 11, 11, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 36],
+            widths: [30, 100, 11, 11, 11, 11, 11, 11, 11, 11, 11, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 36],
             body: body,
           },
           fontSize: 8,
@@ -482,9 +427,9 @@ export class ConfigComponent implements OnInit {
     };
 
 
-
+   
     this.pdfObj = pdfMake.createPdf(def);
-    pdfMake.createPdf(def).open({ defaultFileName: 'facture' + new Date() + '.pdf' });
+     pdfMake.createPdf(def).open({ defaultFileName: 'facture' + new Date() + '.pdf' });
     const options: DocumentViewerOptions = {
       title: 'My PDF'
     }
