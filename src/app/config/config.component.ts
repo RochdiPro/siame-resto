@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { Papa } from 'ngx-papaparse';
+import { HttpClient } from '@angular/common/http';
+import { DatePipe } from '@angular/common';
+import { DocumentViewerOptions } from '@awesome-cordova-plugins/document-viewer/ngx';
+const pdfMake = require("pdfmake/build/pdfmake");
+const pdfFonts = require("pdfmake/build/vfs_fonts");
 
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 @Component({
   selector: 'app-config',
   templateUrl: './config.component.html',
@@ -9,150 +15,26 @@ import { Papa } from 'ngx-papaparse';
 })
 export class ConfigComponent implements OnInit {
 
-  liste_produit: any = [];
-  liste_agent: any = [];
-  liste_of: any = [];
-  historique_of: any = [];
-  accees_admin: any;
-  constructor(private papa: Papa) {
-    this.liste_produit = JSON.parse(localStorage.getItem('liste_produit') + "");
-    this.liste_agent = JSON.parse(localStorage.getItem('liste_agent') + "");
-    this.liste_of = JSON.parse(localStorage.getItem('liste_of') + "");
-    this.accees_admin = JSON.parse(localStorage.getItem('accees_admin') + "");
-    this.historique_of = JSON.parse(localStorage.getItem('historique_of') + "");
+
+  liste_employe: any = [];
+  mois: any;
+
+  constructor(private papa: Papa, private http: HttpClient, private datePipe: DatePipe) {
+
+    this.liste_employe = JSON.parse(localStorage.getItem('liste_employe') + "");
+    this.chargerTemplate();
+    this.templatePdfBase64();
+    this.mois = new Date().getMonth() + 1
+
+
   }
 
 
-  data: any
-  headerRow: any = [];
-  csvData: any = [];
-  exporter() {
-    Swal.fire({
-      title: 'Code',
-      html:
-        '<table>' +
-        '<tr><td>Code</td><td> <input id="swal-input1" value="" class="swal2-input"   ></td></tr>' +
-        '</table>',
-      focusConfirm: false,
-      preConfirm: () => {
-        return [(<HTMLInputElement>document.getElementById('swal-input1')).value,
-        ]
-      },
-      allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-      this.a = result.value
-      if (result.isConfirmed) {
-        if (this.a[0] == 'infonet') {
-          this.headerRow = [];
-          this.csvData = [];
-          this.headerRow.push('of')
-          this.headerRow.push('carton_10')
-          this.headerRow.push('carton_100')
-          this.headerRow.push('Quantite')
-          for (var item in this.historique_of) {
-            const t = [];
-            t.push(this.historique_of[item].of)
-            t.push(this.historique_of[item].nb_print_carton_10)
-            t.push(this.historique_of[item].nb_print_carton_100)
-            let nb = Number(Number(this.historique_of[item].nb_print_carton_10) * 10) + Number(this.historique_of[item].nb)
-            t.push(nb)
-            t.push("")
-            this.csvData.push(t);
-          }
 
-          let csv = this.papa.unparse({
-            fields: this.headerRow,
-            data: this.csvData
-          });
-          var blob = new Blob([csv]);
-          var a = window.document.createElement('a');
-          a.href = window.URL.createObjectURL(blob);
-          a.download = 'Historique_of_lampes.csv';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }
-        else {
-
-          Swal.fire({
-            title: 'Erreur ',
-            text: 'Vérifier vos données  ',
-            icon: 'warning',
-            confirmButtonText: 'ok',
-          })
-        }
-      }
-
-    });
-
-  }
 
   ngOnInit(): void {
   }
-  ch: any;
-
-  public readof(ev: any): void {
-    let file = ev.target.files[0];
-    let fileReader: FileReader = new FileReader();
-    let self = this;
-
-    fileReader.onloadend = () => {
-      this.ch = fileReader.result
-      let t = this.ch.split('\n');
-      this.liste_of = []
-
-      for (let i = 1; i < t.length; i++) {
-        let t2 = t[i].split(",");
-        this.obj = {}
-        this.obj.code_of = t2[0]
-        this.obj.code_fl = t2[1]
-        this.obj.e100 = t2[2]
-        this.obj.etat = "lancé"
-
-
-        if (this.obj.code_of != undefined || this.obj.code_of != " ") {
-          if ((this.obj.code_of == "") == false) {
-            this.liste_of.push(this.obj)
-          }
-
-        }
-      }
-      localStorage.setItem('liste_of', JSON.stringify(this.liste_of));
-
-    }
-    fileReader.readAsText(file);
-  }
-  obj: any = {}
-  o: any;
-  public readproduit(ev: any): void {
-    let file = ev.target.files[0];
-    let fileReader: FileReader = new FileReader();
-    let self = this;
-
-    fileReader.onloadend = () => {
-      this.ch = fileReader.result
-      let t = this.ch.split('\n');
-      this.liste_produit = []
-      for (let i = 1; i < t.length; i++) {
-        let t2 = t[i].split(",");
-        this.obj = {}
-        this.obj.codefl = t2[0]
-        this.obj.code = t2[1]
-        this.obj.gamme = t2[2]
-        this.obj.culot = t2[4]
-        this.obj.puissance = t2[3]
-        this.obj.couleur = t2[5]
-        this.obj.e100 = t2[6]
-        if (this.obj.code != undefined || this.obj.code != " ") {
-          this.liste_produit.push(this.obj)
-        }
-      }
-      localStorage.setItem('liste_produit', JSON.stringify(this.liste_produit));
-
-    }
-    fileReader.readAsText(file);
-  }
-
+  ch: any; obj: any;
   public readagent(ev: any): void {
     let file = ev.target.files[0];
     let fileReader: FileReader = new FileReader();
@@ -161,138 +43,452 @@ export class ConfigComponent implements OnInit {
     fileReader.onloadend = () => {
       this.ch = fileReader.result
       let t = this.ch.split('\n');
-      this.liste_agent = []
+      this.liste_employe = []
       for (let i = 1; i < t.length; i++) {
         let t2 = t[i].split(",");
         this.obj = {}
-        this.obj.matricule = t2[0]
+        this.obj.code = t2[0]
         this.obj.nom = t2[1]
+        this.obj.etat = t2[2]
+        this.obj.date = []
 
-        if (this.obj.matricule != undefined || this.obj.matricule != "" || this.obj.matricule != " ") {
-          this.liste_agent.push(this.obj)
+        if (this.obj.code != undefined || this.obj.code != "" || this.obj.code != " ") {
+          this.liste_employe.push(this.obj)
 
         }
       }
-      localStorage.setItem('liste_agent', JSON.stringify(this.liste_agent));
+      localStorage.setItem('liste_employe', JSON.stringify(this.liste_employe));
 
     }
     fileReader.readAsText(file);
   }
 
 
-  a: any;
-  ajouter() {
 
-    Swal.fire({
-      title: 'Ordre de fabrication',
-      html:
-        '<table>' +
-        '<tr><td>N° OF</td><td> <input id="swal-input1" value="" class="swal2-input"  placeholder="OF" ></td></tr>' +
-        '<tr><td>Code FL</td><td><input id="swal-input2" value="" class="swal2-input"  placeholder="FL..." >  </td></tr>' +
+  modele: any
 
-        '</table>',
-      focusConfirm: false,
-      preConfirm: () => {
-        return [(<HTMLInputElement>document.getElementById('swal-input1')).value,
-        (<HTMLInputElement>document.getElementById('swal-input2')).value,
+  modeleSrc: any;
+  e: any = {}
+  pdfObj: any;
+  //Fixer le temps de chargement du modéle
+  delai(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  //Définir le modéle pour pdf 
+  async templatePdfBase64() {
+    await this.delai(3000);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      this.modeleSrc = reader.result;
+      this.modeleSrc = btoa(this.modeleSrc);
+      this.modeleSrc = atob(this.modeleSrc);
+      this.modeleSrc = this.modeleSrc.replace(/^data:image\/[a-z]+;base64,/, "");
+    }
+    reader.readAsDataURL(this.modele);
+  }
 
-        ]
-      },
-      allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-      this.a = result.value
 
-      if (result.isConfirmed) {
-        if (this.a[0] == '' || this.a[1] == '') {
-          Swal.fire({
-            title: 'Erreur ',
-            text: 'Vérifier vos données  ',
-            icon: 'warning',
-            confirmButtonText: 'ok',
-          })
-        }
-        else {
-          this.obj = {}
-          this.obj.code_of = this.a[0]
-          this.obj.code_fl = this.a[1]
-          this.obj.e100 = -1
-          for (let j = 0; j < this.liste_produit.length; j++) {
-            if (this.a[1] == this.liste_produit[j].codefl) {
-              this.obj.e100 = this.liste_produit[j].e100
+  //Charger le modéle de PDF
+  async chargerTemplate() {
+    this.http.get('assets/images/pdf.jpg', { responseType: 'blob' }).subscribe((resp: any) => {
+      this.modele = resp;
+      return this.modele;
+    }, err => console.error(err),
+      () => console.log())
+  }
+
+  // generation du facture 
+  async generatePDF() {
+    let moispdf=""
+    if(this.mois ==1){ moispdf='Janvier' }
+    if(this.mois ==2){ moispdf='Février' }
+    if(this.mois ==3){ moispdf='Mars' }
+    if(this.mois ==4){ moispdf='Avril' }
+    if(this.mois ==5){ moispdf='Mai' }
+    if(this.mois ==6){ moispdf='Juin' }
+    if(this.mois ==7){ moispdf='Juillet' }
+    if(this.mois ==8){ moispdf='Août' }
+    if(this.mois ==9){ moispdf='Septembre' }
+    if(this.mois ==10){ moispdf='Octobre' }
+    if(this.mois ==11){ moispdf='Novembre' }
+    if(this.mois ==12){ moispdf='Décembre' }
+  
+ 
+
+    var body: any = [];
+
+    var obj = new Array();
+    this.e = { text: "Code", alignment: 'center' }
+    obj.push(this.e)
+
+    this.e = { text: "Nom" }
+    obj.push(this.e)
+
+    this.e = { text: "01", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "02", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "03", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "04", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "05", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "06", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "07", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "08", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "09", alignment: 'center' }
+    obj.push(this.e)
+
+
+    this.e = { text: "10", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "12", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "13", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "14", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "15", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "16", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "17", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "18", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "19", alignment: 'center' }
+    obj.push(this.e)
+
+
+    this.e = { text: "20", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "21", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "22", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "23", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "24", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "25", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "26", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "27", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "28", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "29", alignment: 'center' }
+    obj.push(this.e)
+
+    this.e = { text: "30", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "31", alignment: 'center' }
+    obj.push(this.e)
+    this.e = { text: "N.J", alignment: 'center' }
+    obj.push(this.e)
+    body.push(obj)
+
+
+
+    for (let i = 0; i < this.liste_employe.length; i++) {
+      if (this.liste_employe[i].nom != "" && this.liste_employe[i].nom != undefined) {
+        var obj = new Array();
+        this.e = { text: this.liste_employe[i].code, alignment: 'center' }
+        obj.push(this.e)
+
+        this.e = { text: this.liste_employe[i].nom }
+        obj.push(this.e)
+        let nb = 0;
+        if (this.liste_employe[i].date.length == 0) {
+          this.e = { text: "", alignment: 'center' }
+          obj.push(this.e);
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+
+          obj.push(this.e);
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+
+          obj.push(this.e);
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+          obj.push(this.e)
+
+
+          obj.push(this.e)
+          this.e = { text: "" + nb, alignment: 'center' }
+
+          obj.push(this.e)
+
+
+        } else {
+          for (let j = 0; j < this.liste_employe[i].date.length; j++) {
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "1") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+
             }
-          }
+            else {
+              this.e = { text: "", alignment: 'center' }; obj.push(this.e);
+            }
 
-          this.obj.etat = "lancé"
-          if (this.obj.e100 == -1) {
-            Swal.fire({
-              title: 'Erreur ',
-              text: 'Code article ',
-              icon: 'warning',
-              confirmButtonText: 'ok',
-            })
-          }
-          this.liste_of.push(this.obj)
-          localStorage.setItem('liste_of', JSON.stringify(this.liste_of));
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "2") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
 
-          Swal.fire(
-            'succés',
-            'Ordre de fabrication ',
-            'success'
-          )
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "3") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "4") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) } 
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "5") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "6") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "7") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "8") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "9") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "10") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+
+
+
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "11") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "12") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "13") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "14") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "15") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "16") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "17") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "18") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "19") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "20") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+
+
+
+
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "21") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "22") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "23") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "24") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "25") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "26") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "27") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "28") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "29") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "30") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; obj.push(this.e) }
+
+
+
+
+            if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].jour == "31") {
+              nb = Number(nb) + 1; this.e = { text: "*", alignment: 'center' }; obj.push(this.e)
+            }
+            else { this.e = { text: "", alignment: 'center' }; }
+
+            this.e = { text: "" + nb, alignment: 'center' }; obj.push(this.e)
+            body.push(obj)
+          }
         }
+
+        body.push(obj)
       }
+    }
 
-    });
-  }
-
-
-  ajouter_agent() {
-
-    Swal.fire({
-      title: 'Agent',
-      html:
-        '<table>' +
-        '<tr><td>Matricule</td><td> <input id="swal-input1" value="" class="swal2-input"  placeholder="" ></td></tr>' +
-        '<tr><td>Nom</td><td><input id="swal-input2" value="" class="swal2-input"  placeholder="" >  </td></tr>' +
-
-        '</table>',
-      focusConfirm: false,
-      preConfirm: () => {
-        return [(<HTMLInputElement>document.getElementById('swal-input1')).value,
-        (<HTMLInputElement>document.getElementById('swal-input2')).value,
-
-        ]
+    let date_edit = this.datePipe.transform(new Date(), 'dd/MM/yyyy  | HH:MM');
+    var obj = new Array();
+    var def = {
+      background: [
+        {
+          image: 'data:image/jpeg;base64,' + this.modeleSrc, width: 600
+        }
+      ],
+      defaultStyle: {
+        alignment: 'centre'
       },
-      allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-      this.a = result.value
+      pageMargins: [40, 40, 40, 40],
+      pageOrientation: 'landscape',
 
-      if (result.isConfirmed) {
-        if (this.a[0] == '' || this.a[1] == '') {
-          Swal.fire({
-            title: 'Erreur ',
-            text: 'Vérifier vos données  ',
-            icon: 'warning',
-            confirmButtonText: 'ok',
-          })
+      info: {
+        title: 'Siame',
+      },
+
+      header: [ 
+        {
+          text: ' Mois : '+moispdf,
+          fontSize: 12,
+          color: 'black',
+
+          relativePosition: { x: 200, y: 40 }
+        },
+        {
+          text: '  éditer le ' + date_edit,
+          fontSize: 12,
+          color: 'black',
+
+          relativePosition: { x: 200, y: 80 }
+        },
+        {
+          text: '  Rapport Cantine',
+          fontSize: 18,
+          color: '#1E90FF',
+          blod: true,
+          relativePosition: { x: 500, y: 60 }
+        },
+      ],
+      content: [
+        {
+          table: {
+             widths: [30, 100, 11, 11, 11, 11, 11, 11, 11, 11, 11, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 36],
+            body: body,
+          },
+          fontSize: 8,
+          margin: [-32, 95, 0, 0],
+
         }
-        else {
-          this.obj = {}
+      ],
 
-          this.obj.matricule = this.a[0]
-          this.obj.nom = this.a[1]
+    };
 
-          this.liste_agent.push(this.obj)
-          localStorage.setItem('liste_agent', JSON.stringify(this.liste_agent));
 
-          Swal.fire(
-            'succés',
-            'Agent ',
-            'success'
-          )
-        }
-      }
 
-    });
+    this.pdfObj = pdfMake.createPdf(def);
+    pdfMake.createPdf(def).open({ defaultFileName: 'facture' + new Date() + '.pdf' });
+    const options: DocumentViewerOptions = {
+      title: 'My PDF'
+    }
   }
+
+
 }

@@ -1,41 +1,11 @@
-<div class="img" style="width: 100%;">
 
-	<div class="container">
-		<div class="d-flex justify-content-center h-100">
-			<div class="card" style="height: 40%;">
-				<div class="card-header" style="height: 35%; ">
-
-					<img src="./../../assets/images/avatar.png" width="20%" style="margin-left: auto;
-				margin-right: auto;">
-				</div>
-				<div class="card-body">
-					<form [formGroup]="cnx">
-						<div class="input-group form-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text"><i class="fas fa-user"></i></span>
-							</div>
-							<input formControlName="id" type="text" class="form-control" placeholder=""
-								[matKeyboard]="''">
-
-						</div>
-						<div class="input-group form-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text"><i class="fas fa-key"></i></span>
-							</div>
-							<input formControlName="pwd" type="password" class="form-control" placeholder=""
-								[matKeyboard]="'de-CH'">
-						</div>
-
-						<div class="form-group">
-							<input type="submit" *ngIf='!(cercle)' value="Connecter" class="btn btn-success"
-								style="width: 100%; color: f08e01;" (click)="connexion()">
-
-							<mat-spinner mode="indeterminate" *ngIf='cercle' style="margin-left:35%"></mat-spinner>
-
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+<div id="non-printable" >
+ <img src="./../../assets/images/img.png" height="100%" style="margin-top: 6%;">
+ <img src="./../../assets/images/an.gif" width="30%" style="margin-top: 10%;"  >
+ <form [formGroup]="form">
+	<div class="input-group form-group">		 
+		<input formControlName="code" type="text" class="form-control"  style="margin-top:-5%"  #code  (keypress)="g_code($event)">
+	</div> 
+</form>
 </div>
+ 
