@@ -63,7 +63,7 @@ export class ConfigComponent implements OnInit {
         this.obj = {}
         this.obj.code = t2[0]
         this.obj.nom = t2[1]
-        this.obj.etat = t2[2]
+        this.obj.etat = "oui"
         this.obj.date = []
 
         if (this.obj.code != undefined || this.obj.code != "" || this.obj.code != " ") {
@@ -110,9 +110,19 @@ export class ConfigComponent implements OnInit {
       () => console.log())
   }
 
-  // generation du facture 
+  // generation du rapport
+  testpdf:any=false; 
   async generatePDF() {
-    let moispdf = ""
+    this.testpdf=true;
+    await this.delai (2000);
+    this.testpdf=false
+    this.PDF() ;
+     
+  }
+
+  // generation du rapport 
+  async  PDF() {
+     let moispdf = ""
     if (this.mois == 1) { moispdf = 'Janvier' }
     if (this.mois == 2) { moispdf = 'Février' }
     if (this.mois == 3) { moispdf = 'Mars' }
@@ -260,97 +270,97 @@ export class ConfigComponent implements OnInit {
           nb = 0;
           for (let j = 0; j < this.liste_employe[i].date.length; j++) {
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "1") {
-              nb = Number(nb) + 1; obj[2] = "*"
+              nb = Number(nb) + 1; obj[1] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "2") {
-              nb = Number(nb) + 1; obj[3] = "*"
+              nb = Number(nb) + 1; obj[2] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "3") {
-              nb = Number(nb) + 1; obj[4] = "*"
+              nb = Number(nb) + 1; obj[3] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "4") {
-              nb = Number(nb) + 1; obj[5] = "*"
+              nb = Number(nb) + 1; obj[4] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "5") {
-              nb = Number(nb) + 1; obj[6] = "*"
+              nb = Number(nb) + 1; obj[5] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "6") {
-              nb = Number(nb) + 1; obj[7] = "*"
+              nb = Number(nb) + 1; obj[6] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "7") {
-              nb = Number(nb) + 1; obj[8] = "*"
+              nb = Number(nb) + 1; obj[7] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "8") {
-              nb = Number(nb) + 1; obj[9] = "*"
+              nb = Number(nb) + 1; obj[8] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "9") {
-              nb = Number(nb) + 1; obj[10] = "*"
+              nb = Number(nb) + 1; obj[9] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "10") {
-              nb = Number(nb) + 1; obj[11] = "*"
+              nb = Number(nb) + 1; obj[10] = "*"
             }
 
 
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "11") {
-              nb = Number(nb) + 1; obj[12] = "*"
+              nb = Number(nb) + 1; obj[11] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "12") {
-              nb = Number(nb) + 1; obj[13] = "*"
+              nb = Number(nb) + 1; obj[12] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "13") {
-              nb = Number(nb) + 1; obj[14] = "*"
+              nb = Number(nb) + 1; obj[13] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "14") {
-              nb = Number(nb) + 1; obj[15] = "*"
+              nb = Number(nb) + 1; obj[14] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "15") {
-              nb = Number(nb) + 1; obj[16] = "*"
+              nb = Number(nb) + 1; obj[15] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "16") {
-              nb = Number(nb) + 1; obj[17] = "*"
+              nb = Number(nb) + 1; obj[16] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "17") {
-              nb = Number(nb) + 1; obj[18] = "*"
+              nb = Number(nb) + 1; obj[17] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "18") {
-              nb = Number(nb) + 1; obj[19] = "*"
+              nb = Number(nb) + 1; obj[18] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "19") {
-              nb = Number(nb) + 1; obj[20] = "*"
+              nb = Number(nb) + 1; obj[19] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "20") {
-              nb = Number(nb) + 1; obj[21] = "*"
+              nb = Number(nb) + 1; obj[20] = "*"
             }
 
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "21") {
-              nb = Number(nb) + 1; obj[22] = "*"
+              nb = Number(nb) + 1; obj[21] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "22") {
-              nb = Number(nb) + 1; obj[23] = "*"
+              nb = Number(nb) + 1; obj[22] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "23") {
-              nb = Number(nb) + 1; obj[24] = "*"
+              nb = Number(nb) + 1; obj[23] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "24") {
-              nb = Number(nb) + 1; obj[25] = "*"
+              nb = Number(nb) + 1; obj[24] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "25") {
-              nb = Number(nb) + 1; obj[26] = "*"
+              nb = Number(nb) + 1; obj[25] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "26") {
-              nb = Number(nb) + 1; obj[27] = "*"
+              nb = Number(nb) + 1; obj[26] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "27") {
-              nb = Number(nb) + 1; obj[28] = "*"
+              nb = Number(nb) + 1; obj[27] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "28") {
-              nb = Number(nb) + 1; obj[29] = "*"
+              nb = Number(nb) + 1; obj[28] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "29") {
-              nb = Number(nb) + 1; obj[30] = "*"
+              nb = Number(nb) + 1; obj[29] = "*"
             }
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "30") {
-              nb = Number(nb) + 1; obj[31] = "*"
+              nb = Number(nb) + 1; obj[30] = "*"
             }
 
             if (this.liste_employe[i].date[j].mois == this.mois && this.liste_employe[i].date[j].annee == this.annee && this.liste_employe[i].date[j].jour == "30") {
@@ -425,7 +435,6 @@ export class ConfigComponent implements OnInit {
       ],
 
     };
-
 
    
     this.pdfObj = pdfMake.createPdf(def);

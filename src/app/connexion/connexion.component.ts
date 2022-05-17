@@ -35,10 +35,11 @@ export class ConnexionComponent implements AfterViewInit {
 
     
      this.liste_employe = JSON.parse(localStorage.getItem('liste_employe') + "");
+     if(this.liste_employe == undefined){this.liste_employe=[]}
     this.annee_ticket = JSON.parse(localStorage.getItem('annee_ticket') + "");
     this.mois_ticket = JSON.parse(localStorage.getItem('mois_ticket') + "");
     this.jour_ticket = JSON.parse(localStorage.getItem('jour_ticket') + "");
-    this.date =  new Date().getDay()
+    this.date =  new Date().getDate()
     this.mois=new Date().getMonth() + 1
     this.annee = new Date().getFullYear();
    
@@ -65,22 +66,10 @@ export class ConnexionComponent implements AfterViewInit {
     
   }
 
-  ngOnInit(): void {
-      
-    
-    
-    
+  ngOnInit(): void { 
    
   }
-  changer(){
-    this.form.get('code')?.value
-    for (let i = 0; i < this.liste_employe.length; i++) {
-    for (let j = 0; j < this.liste_employe[i].date.length; j++) {
-      this.liste_employe[i].date[j].jour = 11
-    }
-    }
-  }
-
+  
   popupWin: any; inconnu: any = false; emp: any; repeter: any = false ; obj:any;
   // generation des tickets
 
@@ -94,7 +83,7 @@ export class ConnexionComponent implements AfterViewInit {
         this.router.navigate(['config'])
       } else if ((ch == "0000000000000000") == false) {
         this.inconnu = false
-
+        
         for (let i = 0; i < this.liste_employe.length; i++) {
           if (ch == this.liste_employe[i].code) {
             this.emp = this.liste_employe[i]; this.inconnu = true
